@@ -1,0 +1,42 @@
+# vim: filetype=sh
+
+CONTEXT="compiler/intel"
+VERSION="4.2.12"
+
+SOURCE="http://www.hdfgroup.org/ftp/HDF/releases/HDF${VERSION}/src/hdf-${VERSION}.tar.bz2"
+MD5SUM="17a5a1a53fd7ffecf8dececfa3598c16"
+
+BUILD_DEPENDS=(
+    'intel-fc'
+    'intel-cc'
+    'zlib'
+)
+
+USE_DEPENDS=( )
+
+function download {
+    local tarfile=$(basename "${SOURCE}")
+    wget "${SOURCE}" -O "${tarfile}"
+    echo "${MD5SUM} ${tarfile}" | md5sum --check
+    tar --strip-components=1 -xvf "${tarfile}"
+}
+
+function buildhelp {
+    ./configure --help
+}
+
+function build {
+    ./configure \
+        --prefix="${INSTALLDIR}" \
+        --disable-netcdf \
+        --enable-production
+    make
+}
+
+function check {
+    make check
+}
+
+function install {
+    make install
+}

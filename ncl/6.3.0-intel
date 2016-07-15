@@ -1,0 +1,84 @@
+# vim: filetype=sh
+
+CONTEXT="compiler/intel"
+VERSION="6.3.0"
+
+SOURCE="https://www.earthsystemgrid.org/download/fileDownload.html?logicalFileId=bec58cb3-cd9b-11e4-bb80-00c0f03d5b7c"
+MD5SUM="d41d8cd98f00b204e9800998ecf8427e"
+
+DESCRIPTION="NCL is an interpreted language designed specifically for scientific data analysis and visualisation"
+WEBSITE="http://www.ncl.ucar.edu/"
+
+BUILD_DEPENDS=(
+    'intel-fc'
+    'intel-cc'
+    'zlib'
+)
+
+USE_DEPENDS=(
+)
+
+function download {
+    local tarfile="ncl.tar.gz"
+    wget "${SOURCE}" -O "${tarfile}"
+    tar --strip-components=1 -xvf "${tarfile}"
+}
+
+NCL=y 
+Netcdf=y 
+HDF4=y 
+HDF4raster=y 
+HDF4szip=n 
+Triangle=n 
+NetCDF4=y 
+OpenDAP=y 
+GDAL=n 
+UDUNITS=y 
+Vis5d=n 
+HDFEOS2=y 
+HDF5=y 
+HDFEOS5=y 
+GRIB2=y 
+Review=n 
+Save=y 
+
+function build {
+    cp config/LINUX.64.INTEL config/LINUX
+    make -C config -f Makefile.ini
+    config/ymake -config $PWD/config
+
+    rm -f config/Site.local
+    ./Configure <<EOF
+
+$NCL
+$INSTALLDIR
+$TMPDIR
+$Netcdf
+$HDF4
+$HDF4raster
+$HDF4szip
+$Triangle
+$NetCDF4
+$OpenDAP
+$GDAL
+$UDUNITS
+$Vis5d
+$HDFEOS2
+$HDF5
+$HDFEOS5
+$GRIB2
+/usr/lib
+/usr/include
+$Review
+$Save
+EOF
+
+}
+
+function check {
+    true
+}
+
+function install {
+    make Everything
+}

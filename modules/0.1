@@ -1,0 +1,29 @@
+# vim: filetype=sh
+
+CONTEXT="core"
+VERSION="0.1"
+
+BUILD_DEPENDS=( )
+
+USE_DEPENDS=( )
+
+function download {
+    cp -r "${CONFIGFILE}/../src/*" .
+}
+
+function build {
+    true
+}
+
+function check {
+    true
+}
+
+function install {
+    make install DEST=${MODULE_BASE}
+}
+
+# No module to create
+function create_module {
+    true
+}

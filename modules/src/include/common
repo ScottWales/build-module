@@ -1,0 +1,42 @@
+#vim: filetype=tcl
+
+set NAME [string toupper $name]
+
+conflict $name
+
+proc ModulesHelp { } {
+    global description website install_date installed_by
+    puts stderr "$description"
+    puts stderr "$website"
+    puts stderr ""
+    puts stderr "Installed $install_date by $installed_by"
+}
+
+setenv [set NAME]_VERSION $version
+setenv [set NAME]_ROOT $prefix
+
+# Only add directories if they exist
+if [ file exists $prefix/bin ] {
+    prepend-path PATH $prefix/bin
+}
+if [ file exists $prefix/lib64 ] {
+    prepend-path RPATH           $prefix/lib64
+    prepend-path LD_RUN_PATH     $prefix/lib64
+    prepend-path LIBRARY_PATH    $prefix/lib64
+    prepend-path LD_LIBRARY_PATH $prefix/lib64
+}
+if [ file exists $prefix/lib ] {
+    prepend-path RPATH           $prefix/lib
+    prepend-path LD_RUN_PATH     $prefix/lib
+    prepend-path LIBRARY_PATH    $prefix/lib
+    prepend-path LD_LIBRARY_PATH $prefix/lib
+}
+if [ file exists $prefix/include ] {
+    prepend-path CPATH $prefix/include
+    # Old versions of ifort get modules from FPATH
+    prepend-path FPATH $prefix/include
+}
+if [ file exists $prefix/man ] {
+    prepend-path MANPATH $prefix/man
+}
+
